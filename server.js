@@ -67,7 +67,6 @@ function gateKeeper(req, res, next) {
   // your code should replace the line below'
   let header = req.get('x-username-and-password');
   let UserNameandPasswordObj = queryString.parse(header);
-  let Userfound;
   let userName = UserNameandPasswordObj.user;
   let userPass = UserNameandPasswordObj.pass;
   for (let i=0; i<USERS.length; i++) {
@@ -81,11 +80,10 @@ function gateKeeper(req, res, next) {
 }
 
 // Add the middleware to your app!
-
+app.use(gateKeeper);
 // this endpoint returns a json object representing the user making the request,
 // IF they supply valid user credentials. This endpoint assumes that `gateKeeper` 
 // adds the user object to the request if valid credentials were supplied.
-app.use(gateKeeper);
 app.get("/api/users/me", (req, res) => {
   // send an error message if no or wrong credentials sent
   if (req.user === undefined) {

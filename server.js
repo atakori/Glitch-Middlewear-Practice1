@@ -64,7 +64,19 @@ const USERS = [
 //  4. if matching user found, add the user object to the request object
 //     (aka, `req.user = matchedUser`)
 function gateKeeper(req, res, next) {
-  // your code should replace the line below
+  // your code should replace the line below'
+  let header = req.get('x-username-and-password');
+  let UserNameandPasswordObj = queryString.parse(header);
+  let Userfound;
+  let userName = UserNameandPasswordObj.user;
+  let userPass = UserNameandPasswordObj.pass;
+  for (let i=0; i<USERS.length; i++) {
+    let arrayUserName = USERS[i].firstName;
+    let arrayPassword = USERS[i].password;
+    if (userName === arrayUserName && userPass === arrayPassword) {
+      req.user = USERS[i];
+    }
+  }
   next();
 }
 
@@ -73,6 +85,7 @@ function gateKeeper(req, res, next) {
 // this endpoint returns a json object representing the user making the request,
 // IF they supply valid user credentials. This endpoint assumes that `gateKeeper` 
 // adds the user object to the request if valid credentials were supplied.
+app.use(gateKeeper);
 app.get("/api/users/me", (req, res) => {
   // send an error message if no or wrong credentials sent
   if (req.user === undefined) {
